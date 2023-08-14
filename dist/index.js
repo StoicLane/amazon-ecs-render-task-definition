@@ -1234,12 +1234,12 @@ class BasicCredentialHandler {
         }
         // Build object
         const variable = {
-          name: trimmedLine.substring(0, separatorIdx),
+          key: trimmedLine.substring(0, separatorIdx),
           value: trimmedLine.substring(separatorIdx + 1),
         };
 
         // Search container definition environment for one matching name
-        const variableDef = taskDefContents.tags.find((e) => e.name == variable.name);
+        const variableDef = taskDefContents.tags.find((e) => e.key == variable.key);
         if (variableDef) {
           // If found, update
           variableDef.value = variable.value;
@@ -1259,7 +1259,7 @@ class BasicCredentialHandler {
       postfix: '.json',
       keep: true,
       discardDescriptor: true
-    });
+      });
     const newTaskDefContents = JSON.stringify(taskDefContents, null, 2);
     fs.writeFileSync(updatedTaskDefFile.name, newTaskDefContents);
     core.setOutput('task-definition', updatedTaskDefFile.name);

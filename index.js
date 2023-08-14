@@ -162,7 +162,7 @@ async function run() {
       postfix: '.json',
       keep: true,
       discardDescriptor: true
-    });
+      });
     const newTaskDefContents = JSON.stringify(taskDefContents, null, 2);
     fs.writeFileSync(updatedTaskDefFile.name, newTaskDefContents);
     core.setOutput('task-definition', updatedTaskDefFile.name);
