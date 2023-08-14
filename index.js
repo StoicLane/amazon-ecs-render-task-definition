@@ -15,6 +15,8 @@ async function run() {
     const logConfigurationLogDriver = core.getInput("log-configuration-log-driver", { required: false });
     const logConfigurationOptions = core.getInput("log-configuration-options", { required: false });
     const dockerLabels = core.getInput('docker-labels', { required: false });
+    const tags = core.getInput('tags', { required: false });
+
 
     // Parse the task definition
     const taskDefPath = path.isAbsolute(taskDefinitionFile) ?
@@ -112,6 +114,43 @@ async function run() {
           }
           const [key, value] = label.split("=");
           containerDef.dockerLabels[key] = value;
+        }
+      })
+    }
+
+    if (tags) {
+
+      // If environment array is missing, create it
+      if (!Array.isArray(taskDefContents.tags)) {
+        taskDefContents.tags = [];
+      }
+
+      // Get pairs by splitting on newlines
+      tags.split('\n').forEach(function (line) {
+        // Trim whitespace
+        const trimmedLine = line.trim();
+        // Skip if empty
+        if (trimmedLine.length === 0) { return; }
+        // Split on =
+        const separatorIdx = trimmedLine.indexOf("=");
+        // If there's nowhere to split
+        if (separatorIdx === -1) {
+            throw new Error(`Cannot parse the tag variable '${trimmedLine}'. Tag variable pairs must be of the form NAME=value.`);
+        }
+        // Build object
+        const variable = {
+          key: trimmedLine.substring(0, separatorIdx),
+          value: trimmedLine.substring(separatorIdx + 1),
+        };
+
+        // Search container definition environment for one matching name
+        const variableDef = taskDefContents.tags.find((e) => e.key == variable.key);
+        if (variableDef) {
+          // If found, update
+          variableDef.value = variable.value;
+        } else {
+          // Else, create
+          taskDefContents.tags.push(variable);
         }
       })
     }
