@@ -22,6 +22,7 @@ async function run() {
     const logConfigurationOptions = core.getInput("log-configuration-options", { required: false });
     const dockerLabels = core.getInput('docker-labels', { required: false });
     const tags = core.getInput('tags', { required: false });
+    const command = core.getInput('command', { required: false });
 
 
     // Parse the task definition
@@ -160,6 +161,11 @@ async function run() {
         }
       })
     }
+
+    if (command) {
+      containerDef.command = command.split(' ')
+    }
+
 
     // Write out a new task definition file
     var updatedTaskDefFile = tmp.fileSync({

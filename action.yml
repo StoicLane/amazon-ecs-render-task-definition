@@ -26,7 +26,10 @@ inputs:
     description: "Create/Override options inside dockerLabels. Each variable is key=value, you can specify multiple variables with multi-line YAML."
     required: false
   tags:
-    description: 'Tags to associate with the ecs task definition'
+    description: "Tags to associate with the ecs task definition"
+    required: false
+  command:
+    description: "Command to override the within the container name"
     required: false
 
 
